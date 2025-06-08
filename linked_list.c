@@ -36,8 +36,7 @@ bool linked_list_delete(struct linked_list * ll){
     struct node *current = ll->head;
     while (current != NULL) {
         struct node *next = current->next;
-        if (free_fptr)
-            free_fptr(current);      
+        free_fptr(current);      
         current = next;
     }
 
@@ -235,9 +234,13 @@ bool linked_list_iterate(struct iterator * iter){
 
     iter->current_node = iter->current_node->next;
     iter->current_index++;
-    iter->data = iter->current_node->data;
-
-    return true;  
+    
+    if (iter->current_node) {
+        iter->data = iter->current_node->data;
+        return true;
+    }
+    
+    return false;  
 }
 
 // Registers malloc() function.
