@@ -67,7 +67,9 @@ size_t linked_list_size(struct linked_list * ll){
 // Returns TRUE on success, FALSE otherwise.
 //
 bool linked_list_insert_end(struct linked_list * ll,unsigned int data){
-
+    if(ll==NULL){
+        return false;
+    }
     while(ll->head!=NULL){
         ll->head = ll->head->next;
     }
@@ -86,14 +88,13 @@ bool linked_list_insert(struct linked_list * ll,size_t index,unsigned int data){
     if (ll == NULL)
         return false;
 
-    struct node *new_node = malloc_fptr ? malloc_fptr(sizeof(struct node)) : malloc_fptr(sizeof(struct node));
+    struct node *new_node = malloc_fptr(sizeof(struct node));
     if (new_node == NULL)
         return false;
 
     new_node->data = data;
     new_node->next = NULL;
 
-    // Insert at the head
     if (index == 0) {
         new_node->next = ll->head;
         ll->head = new_node;
@@ -122,8 +123,9 @@ bool linked_list_insert(struct linked_list * ll,size_t index,unsigned int data){
 bool linked_list_insert_front(struct linked_list * ll,unsigned int data){
     if (ll == NULL) return false;
     
-    struct node *new_node = malloc_fptr ? malloc_fptr(sizeof(struct node)) : malloc(sizeof(struct node));
-    if (!new_node) return false;
+    struct node *new_node = malloc_fptr(sizeof(struct node));
+    if (!new_node) 
+        return false;
     
     new_node->data = data;
     new_node->next = ll->head;
@@ -149,9 +151,7 @@ size_t linked_list_find(struct linked_list * ll,unsigned int data){
         curr = curr->next;
         index++;
     }
-
-    // Data not found
-    return SIZE_MAX;
+    return index;
     }
 
 // Removes a node from the linked_list at a specific index.
@@ -165,12 +165,10 @@ bool linked_list_remove(struct linked_list * ll,size_t index){
 
     struct node *to_delete = NULL;
 
-    // Remove head
     if (index == 0) {
         to_delete = ll->head;
         ll->head = ll->head->next;
-        if (free_fptr)
-            free_fptr(to_delete);
+        free_fptr(to_delete);
 
         return true;
     }
@@ -187,11 +185,8 @@ bool linked_list_remove(struct linked_list * ll,size_t index){
         return false; 
 
     prev->next = to_delete->next;
+    free_fptr(to_delete);
 
-    if (free_fptr)
-        free_fptr(to_delete);
-    else
-        free(to_delete);
 
     return true;
 }
@@ -211,8 +206,8 @@ struct iterator * linked_list_create_iterator(struct linked_list * ll,size_t ind
     }
         struct iterator *iter = (struct iterator *)malloc_fptr(sizeof(struct iterator));
         iter->ll = ll;
-        iter->data = ll->head->data;
-        iter->current_node = ll->head;
+        iter->data = node_ptr->data;
+        iter->current_node = node_ptr;
         iter->current_index = index;
         return iter;
 }
