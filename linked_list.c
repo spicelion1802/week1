@@ -69,10 +69,26 @@ bool linked_list_insert_end(struct linked_list * ll,unsigned int data){
     if(ll==NULL){
         return false;
     }
-    while(ll->head!=NULL){
-        ll->head = ll->head->next;
+    struct node *new_node = malloc_fptr(sizeof(struct node));
+    if (new_node == NULL) {
+        return false;
     }
-    ll->head->data=data;
+    
+    new_node->data = data;
+    new_node->next = NULL;
+    
+    if (ll->head == NULL) {
+        ll->head = new_node;
+    } 
+
+    else {
+        struct node *curr = ll->head;
+        while (curr->next != NULL) {
+            curr = curr->next;
+        }
+        curr->next = new_node;
+    }
+    
     return true;
     }
 
